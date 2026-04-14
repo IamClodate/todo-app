@@ -1,0 +1,10 @@
+# Ignore system files
+.DS_Store
+
+# Node artifacts
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

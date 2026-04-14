@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biko Todo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <main class="page auth-page" id="auth-screen">
+        <div class="card auth-card">
+          <h1>Biko Todo</h1>
+          <p class="subtitle">Login or create an account to access your dashboard.</p>
+
+          <div class="tab-row">
+            <button id="login-tab" class="tab active">Login</button>
+            <button id="register-tab" class="tab">Register</button>
+          </div>
+
+          <div id="auth-error" class="alert hidden"></div>
+
+          <form id="auth-form" class="form-grid">
+            <div id="name-field" class="form-group hidden">
+              <label for="full-name">Full name</label>
+              <input id="full-name" type="text" placeholder="Your name" autocomplete="name" />
+            </div>
+
+            <div class="form-group">
+              <label for="auth-email">Email</label>
+              <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="email" />
+            </div>
+
+            <div class="form-group">
+              <label for="auth-password">Password</label>
+              <input id="auth-password" type="password" placeholder="Enter password" autocomplete="current-password" />
+            </div>
+
+            <div id="confirm-password-field" class="form-group hidden">
+              <label for="confirm-password">Confirm password</label>
+              <input id="confirm-password" type="password" placeholder="Confirm password" autocomplete="new-password" />
+            </div>
+
+            <button id="auth-submit" type="submit" class="primary-btn">Login</button>
+          </form>
+        </div>
+      </main>
+
+      <main class="page dashboard-page hidden" id="dashboard-screen">
+        <header class="header-bar">
+          <div>
+            <h1>Your Todo Dashboard</h1>
+            <p id="welcome-text" class="subtitle">Welcome back.</p>
+          </div>
+          <button id="logout-button" class="secondary-btn">Logout</button>
+        </header>
+
+        <section class="card stats-card">
+          <div>
+            <p class="stat-label">Total tasks</p>
+            <p id="total-count" class="stat-value">0</p>
+          </div>
+          <div>
+            <p class="stat-label">Completed</p>
+            <p id="completed-count" class="stat-value">0</p>
+          </div>
+          <div>
+            <p class="stat-label">Pending</p>
+            <p id="pending-count" class="stat-value">0</p>
+          </div>
+        </section>
+
+        <section class="card form-card">
+          <h2 id="task-form-title">Add new task</h2>
+          <div id="task-error" class="alert hidden"></div>
+
+          <form id="task-form" class="form-grid">
+            <input id="edit-task-id" type="hidden" />
+            <div class="form-group">
+              <label for="task-title">Title</label>
+              <input id="task-title" type="text" placeholder="Task title" />
+            </div>
+
+            <div class="form-group">
+              <label for="task-description">Description</label>
+              <textarea id="task-description" rows="3" placeholder="Task description"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="task-priority">Priority</label>
+              <select id="task-priority">
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+
+            <button id="save-task" type="submit" class="primary-btn">Save task</button>
+          </form>
+        </section>
+
+        <section class="card filter-card">
+          <div class="filter-group">
+            <label for="filter-status">Status</label>
+            <select id="filter-status">
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filter-priority">Priority</label>
+            <select id="filter-priority">
+              <option value="all">All</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+
+          <div class="filter-group search-group">
+            <label for="search-query">Search</label>
+            <input id="search-query" type="search" placeholder="Search tasks" />
+          </div>
+        </section>
+
+        <section class="card task-list-card">
+          <h2>My tasks</h2>
+          <div id="tasks-list" class="tasks-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
