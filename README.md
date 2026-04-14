@@ -24,7 +24,18 @@ Create a Firebase project and enable:
 - Authentication > Email/Password
 - Firestore Database
 
-Then update `firebase.js`:
+### Step-by-step: get Firebase config values
+
+1. Go to the Firebase Console at https://console.firebase.google.com
+2. Click your project or create a new project.
+3. In the left menu, open `Project settings`.
+4. Scroll to the `Your apps` section.
+5. If you do not have a web app yet, click `</>` (Web) to register a new web app.
+6. Enter an app nickname, then click `Register app`.
+7. Copy the config object shown under `Firebase SDK snippet`.
+8. Paste the values into `todo-app/firebase.js`.
+
+Your config should look like this:
 
 ```js
 const firebaseConfig = {
@@ -36,6 +47,12 @@ const firebaseConfig = {
   appId: 'YOUR_APP_ID',
 };
 ```
+
+### Important
+
+- Do not share your Firebase API key publicly if this is a private project.
+- For local testing, use the values exactly as shown in the Firebase console.
+- If you change this file, refresh the browser to reinitialize Firebase.
 
 ## Notes
 

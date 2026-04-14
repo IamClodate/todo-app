@@ -1,4 +1,9 @@
+// Main application script for the todo app.
+// This file handles UI rendering, Firebase authentication, Firestore task storage,
+// and user interactions like adding, editing, and deleting tasks.
 import { auth, db } from './firebase.js';
+
+// Import Firebase authentication helpers.
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -6,6 +11,8 @@ import {
   updateProfile,
   onAuthStateChanged,
 } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
+
+// Import Firestore helpers for reading and writing task documents.
 import {
   collection,
   query,
@@ -19,8 +26,11 @@ import {
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
+// DOM references for the authentication screen and dashboard screen.
 const authScreen = document.getElementById('auth-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
+
+// DOM references for auth form tabs and input fields.
 const loginTab = document.getElementById('login-tab');
 const registerTab = document.getElementById('register-tab');
 const nameField = document.getElementById('name-field');
@@ -33,6 +43,7 @@ const emailInput = document.getElementById('auth-email');
 const passwordInput = document.getElementById('auth-password');
 const confirmPasswordInput = document.getElementById('confirm-password');
 
+// DOM references for dashboard controls and task UI.
 const welcomeText = document.getElementById('welcome-text');
 const logoutButton = document.getElementById('logout-button');
 const taskForm = document.getElementById('task-form');
@@ -51,19 +62,23 @@ const totalCount = document.getElementById('total-count');
 const completedCount = document.getElementById('completed-count');
 const pendingCount = document.getElementById('pending-count');
 
+// Local application state.
 let authMode = 'login';
 let currentUser = null;
 let unsubscribeTasks = null;
 let taskDocuments = [];
 
+// Display a hidden element on the page.
 function showElement(element) {
   element.classList.remove('hidden');
 }
 
+// Hide an element from view.
 function hideElement(element) {
   element.classList.add('hidden');
 }
 
+// Switch between login and register tabs in the auth form.
 function setActiveTab(mode) {
   authMode = mode;
   if (mode === 'login') {
@@ -82,26 +97,31 @@ function setActiveTab(mode) {
   authError.classList.add('hidden');
 }
 
+// Show the authentication screen and hide the dashboard.
 function showAuth() {
   showElement(authScreen);
   hideElement(dashboardScreen);
 }
 
+// Show the dashboard screen and hide the authentication screen.
 function showDashboard() {
   hideElement(authScreen);
   showElement(dashboardScreen);
 }
 
+// Display an error message in the provided element.
 function showError(element, message) {
   element.textContent = message;
   element.classList.remove('hidden');
 }
 
+// Hide and clear an error message.
 function clearError(element) {
   element.textContent = '';
   element.classList.add('hidden');
 }
 
+// Update the task statistics displayed in the dashboard.
 function updateStats(tasks) {
   const total = tasks.length;
   const completed = tasks.filter((task) => task.completed).length;
@@ -326,6 +346,7 @@ function resetTaskForm() {
   clearError(taskError);
 }
 
+// Set up event listeners for UI interactions.
 loginTab.addEventListener('click', () => setActiveTab('login'));
 registerTab.addEventListener('click', () => setActiveTab('register'));
 authForm.addEventListener('submit', handleAuthSubmit);
@@ -338,6 +359,7 @@ filterStatus.addEventListener('change', renderTasks);
 filterPriority.addEventListener('change', renderTasks);
 searchQuery.addEventListener('input', renderTasks);
 
+// Listen for authentication state changes and show the correct screen.
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (user) {
@@ -354,4 +376,5 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
+// Initialize the page in login mode by default.
 setActiveTab('login');
