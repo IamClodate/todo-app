@@ -50,6 +50,7 @@ const taskForm = document.getElementById('task-form');
 const taskTitle = document.getElementById('task-title');
 const taskDescription = document.getElementById('task-description');
 const taskPriority = document.getElementById('task-priority');
+const taskDueDate = document.getElementById('task-due-date');
 const editTaskId = document.getElementById('edit-task-id');
 const taskFormTitle = document.getElementById('task-form-title');
 const taskError = document.getElementById('task-error');
@@ -159,6 +160,7 @@ function renderTasks() {
       const priorityLabel = task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
       const statusLabel = task.completed ? 'Completed' : 'Pending';
       const statusClass = task.completed ? 'completed' : '';
+      const dueDateLabel = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
       return `
         <article class="task-card ${statusClass}">
           <div class="task-header">
@@ -167,6 +169,7 @@ function renderTasks() {
               <div class="task-meta">
                 <span>${priorityLabel}</span>
                 <span>${statusLabel}</span>
+                <span>${dueDateLabel}</span>
               </div>
             </div>
             <div class="task-actions">
@@ -270,6 +273,7 @@ async function handleTaskSubmit(event) {
   const title = taskTitle.value.trim();
   const description = taskDescription.value.trim();
   const priority = taskPriority.value;
+  const dueDate = taskDueDate.value;
   const taskId = editTaskId.value;
 
   if (!title) {
@@ -283,12 +287,13 @@ async function handleTaskSubmit(event) {
   try {
     if (taskId) {
       const taskRef = doc(db, 'tasks', taskId);
-      await updateDoc(taskRef, { title, description, priority });
+      await updateDoc(taskRef, { title, description, priority, dueDate });
     } else {
       await addDoc(collection(db, 'tasks'), {
         title,
         description,
         priority,
+        dueDate,
         completed: false,
         userId: currentUser.uid,
         createdAt: serverTimestamp(),
@@ -325,6 +330,7 @@ async function handleTaskAction(event) {
     taskTitle.value = task.title;
     taskDescription.value = task.description || '';
     taskPriority.value = task.priority;
+    taskDueDate.value = task.dueDate || '';
     editTaskId.value = task.id;
     taskFormTitle.textContent = 'Edit task';
     saveTaskButton.textContent = 'Update task';

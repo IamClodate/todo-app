@@ -7,13 +7,24 @@ import { getFirestore } from 'https://www.gstatic.com/firebasejs/10.11.0/firebas
 // Firebase project configuration.
 // Replace each placeholder value with the config values from your Firebase Console.
 const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID',
+  apiKey: 'AIzaSyDXe4AiGL4Q5GCoFyh2v5gWeZXvUkplcN0',
+  authDomain: 'biko-todo.firebaseapp.com',
+  projectId: 'biko-todo',
+  storageBucket: 'biko-todo.firebasestorage.app',
+  messagingSenderId: '263332279098',
+  appId: '1:263332279098:web:57c2a3a7aefd963d3a1603',
+  measurementId: 'G-M31ECYTLCV',
 };
+
+const hasPlaceholderConfig = Object.values(firebaseConfig).some(
+  (value) => typeof value === 'string' && value.startsWith('YOUR_')
+);
+
+if (hasPlaceholderConfig) {
+  throw new Error(
+    'Firebase config is not set. Open firebase.js and replace all YOUR_* values with your Firebase project settings.'
+  );
+}
 
 // Initialize Firebase with the config values above.
 const app = initializeApp(firebaseConfig);
