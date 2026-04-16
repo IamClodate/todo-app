@@ -3,7 +3,6 @@
 // and user interactions like adding, editing, and deleting tasks.
 import { auth, db } from './firebase.js';
 
-// Import Firebase authentication helpers.
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -12,7 +11,6 @@ import {
   onAuthStateChanged,
 } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js';
 
-// Import Firestore helpers for reading and writing task documents.
 import {
   collection,
   query,
@@ -26,11 +24,9 @@ import {
   serverTimestamp,
 } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
 
-// DOM references for the authentication screen and dashboard screen.
 const authScreen = document.getElementById('auth-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
 
-// DOM references for auth form tabs and input fields.
 const loginTab = document.getElementById('login-tab');
 const registerTab = document.getElementById('register-tab');
 const nameField = document.getElementById('name-field');
@@ -43,7 +39,6 @@ const emailInput = document.getElementById('auth-email');
 const passwordInput = document.getElementById('auth-password');
 const confirmPasswordInput = document.getElementById('confirm-password');
 
-// DOM references for dashboard controls and task UI.
 const welcomeText = document.getElementById('welcome-text');
 const logoutButton = document.getElementById('logout-button');
 const taskForm = document.getElementById('task-form');
@@ -55,33 +50,32 @@ const editTaskId = document.getElementById('edit-task-id');
 const taskFormTitle = document.getElementById('task-form-title');
 const taskError = document.getElementById('task-error');
 const saveTaskButton = document.getElementById('save-task');
+const cancelEditButton = document.getElementById('cancel-edit');
 const filterStatus = document.getElementById('filter-status');
 const filterPriority = document.getElementById('filter-priority');
 const searchQuery = document.getElementById('search-query');
+const clearFiltersButton = document.getElementById('clear-filters');
 const tasksList = document.getElementById('tasks-list');
 const totalCount = document.getElementById('total-count');
 const completedCount = document.getElementById('completed-count');
 const pendingCount = document.getElementById('pending-count');
 
-// Local application state.
 let authMode = 'login';
 let currentUser = null;
 let unsubscribeTasks = null;
 let taskDocuments = [];
 
-// Display a hidden element on the page.
 function showElement(element) {
   element.classList.remove('hidden');
 }
 
-// Hide an element from view.
 function hideElement(element) {
   element.classList.add('hidden');
 }
 
-// Switch between login and register tabs in the auth form.
 function setActiveTab(mode) {
   authMode = mode;
+
   if (mode === 'login') {
     loginTab.classList.add('active');
     registerTab.classList.remove('active');
@@ -95,38 +89,50 @@ function setActiveTab(mode) {
     showElement(confirmPasswordField);
     authSubmit.textContent = 'Create account';
   }
-  authError.classList.add('hidden');
+
+  clearError(authError);
 }
 
-// Show the authentication screen and hide the dashboard.
 function showAuth() {
   showElement(authScreen);
   hideElement(dashboardScreen);
 }
 
-// Show the dashboard screen and hide the authentication screen.
 function showDashboard() {
   hideElement(authScreen);
   showElement(dashboardScreen);
 }
 
-// Display an error message in the provided element.
 function showError(element, message) {
   element.textContent = message;
   element.classList.remove('hidden');
 }
 
-// Hide and clear an error message.
 function clearError(element) {
   element.textContent = '';
   element.classList.add('hidden');
 }
 
-// Update the task statistics displayed in the dashboard.
+function escapeHtml(value = '') {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function updateTaskFormState(isEditing) {
+  taskFormTitle.textContent = isEditing ? 'Edit task' : 'Add new task';
+  saveTaskButton.textContent = isEditing ? 'Update task' : 'Save task';
+  cancelEditButton.classList.toggle('hidden', !isEditing);
+}
+
 function updateStats(tasks) {
   const total = tasks.length;
   const completed = tasks.filter((task) => task.completed).length;
   const pending = total - completed;
+
   totalCount.textContent = total;
   completedCount.textContent = completed;
   pendingCount.textContent = pending;
@@ -139,9 +145,14 @@ function getFilteredTasks() {
 
   return taskDocuments.filter((task) => {
     const matchesStatus =
-      status === 'all' || (status === 'completed' && task.completed) || (status === 'pending' && !task.completed);
+      status === 'all' ||
+      (status === 'completed' && task.completed) ||
+      (status === 'pending' && !task.completed);
     const matchesPriority = priority === 'all' || task.priority === priority;
-    const matchesSearch = task.title.toLowerCase().includes(queryValue);
+    const matchesSearch =
+      task.title.toLowerCase().includes(queryValue) ||
+      (task.description || '').toLowerCase().includes(queryValue);
+
     return matchesStatus && matchesPriority && matchesSearch;
   });
 }
@@ -151,7 +162,11 @@ function renderTasks() {
   updateStats(taskDocuments);
 
   if (filteredTasks.length === 0) {
-    tasksList.innerHTML = '<p class="empty-state">No tasks match your filters yet.</p>';
+    const emptyMessage = taskDocuments.length === 0
+      ? 'No tasks yet. Add the first one above to get started.'
+      : 'No tasks match the current filters. Clear them to see everything again.';
+
+    tasksList.innerHTML = `<p class="empty-state">${emptyMessage}</p>`;
     return;
   }
 
@@ -161,11 +176,14 @@ function renderTasks() {
       const statusLabel = task.completed ? 'Completed' : 'Pending';
       const statusClass = task.completed ? 'completed' : '';
       const dueDateLabel = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
+      const title = escapeHtml(task.title);
+      const description = escapeHtml(task.description || 'No description provided.');
+
       return `
         <article class="task-card ${statusClass}">
           <div class="task-header">
             <div>
-              <h3 class="task-title">${task.title}</h3>
+              <h3 class="task-title">${title}</h3>
               <div class="task-meta">
                 <span>${priorityLabel}</span>
                 <span>${statusLabel}</span>
@@ -178,7 +196,7 @@ function renderTasks() {
               <button class="action-btn danger" data-action="delete" data-id="${task.id}">Delete</button>
             </div>
           </div>
-          <p>${task.description || 'No description provided.'}</p>
+          <p>${description}</p>
         </article>
       `;
     })
@@ -225,7 +243,7 @@ async function handleAuthSubmit(event) {
   }
 
   authSubmit.disabled = true;
-  authSubmit.textContent = authMode === 'login' ? 'Logging in…' : 'Creating account…';
+  authSubmit.textContent = authMode === 'login' ? 'Logging in...' : 'Creating account...';
 
   try {
     if (authMode === 'login') {
@@ -282,12 +300,11 @@ async function handleTaskSubmit(event) {
   }
 
   saveTaskButton.disabled = true;
-  saveTaskButton.textContent = taskId ? 'Updating…' : 'Saving…';
+  saveTaskButton.textContent = taskId ? 'Updating...' : 'Saving...';
 
   try {
     if (taskId) {
-      const taskRef = doc(db, 'tasks', taskId);
-      await updateDoc(taskRef, { title, description, priority, dueDate });
+      await updateDoc(doc(db, 'tasks', taskId), { title, description, priority, dueDate });
     } else {
       await addDoc(collection(db, 'tasks'), {
         title,
@@ -300,15 +317,13 @@ async function handleTaskSubmit(event) {
       });
     }
 
-    taskForm.reset();
-    editTaskId.value = '';
-    taskFormTitle.textContent = 'Add new task';
-    saveTaskButton.textContent = 'Save task';
+    resetTaskForm();
   } catch (error) {
     showError(taskError, 'Unable to save task. Please try again.');
     console.error(error);
   } finally {
     saveTaskButton.disabled = false;
+    updateTaskFormState(Boolean(editTaskId.value));
   }
 }
 
@@ -316,30 +331,43 @@ async function handleTaskAction(event) {
   const action = event.target.dataset.action;
   const taskId = event.target.dataset.id;
 
-  if (!action || !taskId) return;
+  if (!action || !taskId) {
+    return;
+  }
 
   if (action === 'toggle') {
     const task = taskDocuments.find((item) => item.id === taskId);
-    if (!task) return;
+    if (!task) {
+      return;
+    }
+
     await updateDoc(doc(db, 'tasks', taskId), { completed: !task.completed });
+    return;
   }
 
   if (action === 'edit') {
     const task = taskDocuments.find((item) => item.id === taskId);
-    if (!task) return;
+    if (!task) {
+      return;
+    }
+
     taskTitle.value = task.title;
     taskDescription.value = task.description || '';
     taskPriority.value = task.priority;
     taskDueDate.value = task.dueDate || '';
     editTaskId.value = task.id;
-    taskFormTitle.textContent = 'Edit task';
-    saveTaskButton.textContent = 'Update task';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateTaskFormState(true);
+    taskTitle.focus();
+    taskForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return;
   }
 
   if (action === 'delete') {
     const confirmed = confirm('Delete this task permanently?');
-    if (!confirmed) return;
+    if (!confirmed) {
+      return;
+    }
+
     await deleteDoc(doc(db, 'tasks', taskId));
   }
 }
@@ -347,12 +375,17 @@ async function handleTaskAction(event) {
 function resetTaskForm() {
   taskForm.reset();
   editTaskId.value = '';
-  taskFormTitle.textContent = 'Add new task';
-  saveTaskButton.textContent = 'Save task';
+  updateTaskFormState(false);
   clearError(taskError);
 }
 
-// Set up event listeners for UI interactions.
+function clearFilters() {
+  filterStatus.value = 'all';
+  filterPriority.value = 'all';
+  searchQuery.value = '';
+  renderTasks();
+}
+
 loginTab.addEventListener('click', () => setActiveTab('login'));
 registerTab.addEventListener('click', () => setActiveTab('register'));
 authForm.addEventListener('submit', handleAuthSubmit);
@@ -360,21 +393,27 @@ logoutButton.addEventListener('click', async () => {
   await signOut(auth);
 });
 taskForm.addEventListener('submit', handleTaskSubmit);
+cancelEditButton.addEventListener('click', resetTaskForm);
 tasksList.addEventListener('click', handleTaskAction);
 filterStatus.addEventListener('change', renderTasks);
 filterPriority.addEventListener('change', renderTasks);
 searchQuery.addEventListener('input', renderTasks);
+clearFiltersButton.addEventListener('click', clearFilters);
 
-// Listen for authentication state changes and show the correct screen.
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
+
   if (user) {
     welcomeText.textContent = `Welcome back, ${user.displayName || user.email}`;
     showDashboard();
     resetTaskForm();
+    clearFilters();
     subscribeToTasks(user.uid);
   } else {
     showAuth();
+    taskDocuments = [];
+    renderTasks();
+
     if (unsubscribeTasks) {
       unsubscribeTasks();
       unsubscribeTasks = null;
@@ -382,5 +421,5 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-// Initialize the page in login mode by default.
 setActiveTab('login');
+updateTaskFormState(false);

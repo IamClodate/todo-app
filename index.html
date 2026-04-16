@@ -11,7 +11,7 @@
       <main class="page auth-page" id="auth-screen">
         <div class="card auth-card">
           <h1>Biko Todo</h1>
-          <p class="subtitle">Login or create an account to access your dashboard.</p>
+          <p class="subtitle">A focused task space to help me plan clearly, work calmly, and stay on top of every priority.</p>
 
           <div class="tab-row">
             <button id="login-tab" class="tab active">Login</button>
@@ -49,7 +49,7 @@
       <main class="page dashboard-page hidden" id="dashboard-screen">
         <header class="header-bar">
           <div>
-            <h1>Your Todo Dashboard</h1>
+            <h1>My Todo Dashboard</h1>
             <p id="welcome-text" class="subtitle">Welcome back.</p>
           </div>
           <button id="logout-button" class="secondary-btn">Logout</button>
@@ -72,6 +72,7 @@
 
         <section class="card form-card">
           <h2 id="task-form-title">Add new task</h2>
+          <p class="section-copy">I can create, update, and organise each task from one place.</p>
           <div id="task-error" class="alert hidden"></div>
 
           <form id="task-form" class="form-grid">
@@ -100,7 +101,10 @@
               <input id="task-due-date" type="date" />
             </div>
 
-            <button id="save-task" type="submit" class="primary-btn">Save task</button>
+            <div class="form-actions">
+              <button id="save-task" type="submit" class="primary-btn">Save task</button>
+              <button id="cancel-edit" type="button" class="ghost-btn hidden">Cancel edit</button>
+            </div>
           </form>
         </section>
 
@@ -127,6 +131,10 @@
           <div class="filter-group search-group">
             <label for="search-query">Search</label>
             <input id="search-query" type="search" placeholder="Search tasks" />
+          </div>
+
+          <div class="filter-actions">
+            <button id="clear-filters" type="button" class="ghost-btn">Clear filters</button>
           </div>
         </section>
 
