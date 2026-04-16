@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isTaskOwner() {
+      return isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    function validPriority(value) {
+      return value in ['low', 'medium', 'high'];
+    }
+
+    function validRequiredString(value, minLength, maxLength) {
+      return value is string && value.size() >= minLength && value.size() <= maxLength;
+    }
+
+    function validOptionalString(value, maxLength) {
+      return value == null || (value is string && value.size() <= maxLength);
+    }
+
+    function validDueDate(value) {
+      return value == null || (value is string && value.matches('^\\d{4}-\\d{2}-\\d{2}$'));
+    }
+
+    function validTaskDocument(data) {
+      return data.keys().hasOnly([
+          'title',
+          'description',
+          'priority',
+          'dueDate',
+          'completed',
+          'userId',
+          'createdAt',
+          'updatedAt'
+        ]) &&
+        validRequiredString(data.title, 3, 80) &&
+        validOptionalString(data.description, 280) &&
+        validPriority(data.priority) &&
+        validDueDate(data.dueDate) &&
+        data.completed is bool &&
+        data.userId == request.auth.uid &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    match /tasks/{taskId} {
+      allow read, delete: if isTaskOwner();
+
+      allow create: if isSignedIn() &&
+        validTaskDocument(request.resource.data) &&
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time;
+
+      allow update: if isTaskOwner() &&
+        validTaskDocument(request.resource.data) &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.createdAt == resource.data.createdAt &&
+        request.resource.data.updatedAt == request.time;
+    }
+  }
+}

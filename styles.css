@@ -1,23 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Sora:wght@600;700&display=swap');
 
 :root {
-  --bg: #111315;
-  --bg-soft: #171a1d;
-  --surface: #1b1f23;
-  --surface-alt: #22272c;
-  --surface-strong: #2a3036;
+  --bg: #0f2417;
+  --bg-soft: #14311f;
+  --surface: #173a25;
+  --surface-alt: #1c432b;
+  --surface-strong: #245636;
   --line: rgba(255, 255, 255, 0.1);
-  --line-strong: rgba(255, 255, 255, 0.18);
+  --line-strong: rgba(243, 201, 74, 0.32);
   --text: #ffffff;
-  --muted: rgba(255, 255, 255, 0.72);
-  --muted-soft: rgba(255, 255, 255, 0.56);
-  --accent: #d6d9de;
-  --accent-strong: #ffffff;
-  --accent-dark: #0f1113;
-  --danger: #ff8e8e;
-  --danger-bg: rgba(255, 142, 142, 0.12);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.35);
-  --shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.22);
+  --muted: rgba(255, 255, 255, 0.78);
+  --muted-soft: rgba(255, 255, 255, 0.6);
+  --accent: #f3c94a;
+  --accent-strong: #ffe27e;
+  --accent-dark: #173220;
+  --green-bright: #52b36f;
+  --danger: #ffbeb3;
+  --danger-bg: rgba(255, 132, 106, 0.14);
+  --success-line: rgba(114, 223, 120, 0.34);
+  --info-line: rgba(243, 201, 74, 0.28);
+  --shadow-lg: 0 26px 60px rgba(4, 14, 8, 0.38);
+  --shadow-sm: 0 14px 30px rgba(4, 14, 8, 0.24);
+  --priority-high: #ffd166;
+  --priority-medium: #a7e26d;
+  --priority-low: #6bd2a4;
 }
 
 * {
@@ -34,9 +40,9 @@ body {
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.06), transparent 24%),
-    linear-gradient(180deg, #101214 0%, #15181b 100%);
+    radial-gradient(circle at top left, rgba(243, 201, 74, 0.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(100, 195, 110, 0.2), transparent 28%),
+    linear-gradient(180deg, #102916 0%, #0c1c12 100%);
 }
 
 button,
@@ -61,7 +67,9 @@ select {
 }
 
 .card {
-  background: linear-gradient(180deg, rgba(32, 37, 42, 0.94) 0%, rgba(24, 28, 32, 0.98) 100%);
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(29, 68, 44, 0.94) 0%, rgba(19, 45, 29, 0.98) 100%);
   border: 1px solid var(--line);
   border-radius: 24px;
   padding: 1.5rem;
@@ -83,7 +91,7 @@ select {
 }
 
 .auth-card {
-  max-width: 540px;
+  max-width: 580px;
   margin: 0 auto;
 }
 
@@ -91,7 +99,7 @@ select {
 .dashboard-page h1,
 .task-list-card h2,
 .form-card h2 {
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.3rem;
   font-family: 'Sora', 'Segoe UI', sans-serif;
   letter-spacing: -0.03em;
   color: var(--text);
@@ -99,15 +107,26 @@ select {
 
 .auth-card h1,
 .dashboard-page h1 {
-  font-size: clamp(1.9rem, 2.8vw, 2.8rem);
+  font-size: clamp(2rem, 2.8vw, 2.8rem);
 }
 
+.eyebrow,
 .subtitle,
 .section-copy,
 .stat-label,
 .empty-state,
-.task-card p {
+.task-card p,
+.field-hint {
   color: var(--muted);
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
 }
 
 .subtitle,
@@ -120,12 +139,48 @@ select {
   margin-bottom: 1rem;
 }
 
+.field-hint {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.brand-lockup,
+.dashboard-title,
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-title {
+  align-items: flex-start;
+}
+
+.section-heading {
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.brand-logo {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  box-shadow: 0 14px 28px rgba(9, 20, 12, 0.28);
+  flex-shrink: 0;
+}
+
+.brand-logo-small {
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+}
+
 .tab-row {
   display: flex;
   gap: 0.65rem;
   margin: 1.4rem 0;
   padding: 0.35rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--line);
   border-radius: 16px;
 }
@@ -134,7 +189,8 @@ select {
 .action-btn,
 .primary-btn,
 .secondary-btn,
-.ghost-btn {
+.ghost-btn,
+.toast {
   transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
 }
 
@@ -150,10 +206,10 @@ select {
 }
 
 .tab.active {
-  background: var(--surface-strong);
-  border-color: var(--line);
+  background: rgba(243, 201, 74, 0.14);
+  border-color: rgba(243, 201, 74, 0.24);
   color: var(--text);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .form-grid {
@@ -177,9 +233,9 @@ input,
 textarea,
 select {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   padding: 0.9rem 0.95rem;
 }
@@ -193,8 +249,8 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  border-color: var(--line-strong);
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+  border-color: rgba(243, 201, 74, 0.42);
+  box-shadow: 0 0 0 4px rgba(243, 201, 74, 0.12);
   background: rgba(255, 255, 255, 0.06);
 }
 
@@ -204,7 +260,7 @@ textarea {
 }
 
 select option {
-  color: #111315;
+  color: #14311f;
 }
 
 .form-actions,
@@ -230,18 +286,18 @@ select option {
 }
 
 .primary-btn {
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: var(--accent-dark);
+  border: 1px solid rgba(255, 226, 126, 0.3);
+  color: #203418;
   background: linear-gradient(135deg, var(--accent-strong) 0%, var(--accent) 100%);
-  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 14px 26px rgba(30, 46, 19, 0.25);
 }
 
 .secondary-btn,
 .ghost-btn,
 .action-btn {
-  border: 1px solid var(--line);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .primary-btn:hover,
@@ -271,11 +327,11 @@ select option {
 
 .stats-card {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
   background:
-    radial-gradient(circle at top right, rgba(255, 255, 255, 0.08), transparent 30%),
-    linear-gradient(180deg, rgba(36, 42, 47, 0.96) 0%, rgba(25, 29, 33, 0.98) 100%);
+    radial-gradient(circle at top right, rgba(243, 201, 74, 0.14), transparent 26%),
+    linear-gradient(180deg, rgba(35, 81, 50, 0.96) 0%, rgba(20, 48, 31, 0.98) 100%);
 }
 
 .stat-label {
@@ -292,7 +348,7 @@ select option {
 
 .filter-card {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0.9rem;
   align-items: end;
 }
@@ -311,15 +367,41 @@ select option {
 }
 
 .task-card {
-  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
   padding: 1rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0%, rgba(255, 255, 255, 0.02) 100%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.task-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.task-card.priority-high::before {
+  background: linear-gradient(180deg, var(--priority-high), rgba(255, 209, 102, 0.22));
+}
+
+.task-card.priority-medium::before {
+  background: linear-gradient(180deg, var(--priority-medium), rgba(167, 226, 109, 0.22));
+}
+
+.task-card.priority-low::before {
+  background: linear-gradient(180deg, var(--priority-low), rgba(107, 210, 164, 0.22));
 }
 
 .task-card.completed {
-  border-color: rgba(255, 255, 255, 0.16);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border-color: rgba(107, 210, 164, 0.18);
+  background: linear-gradient(180deg, rgba(88, 167, 103, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+}
+
+.task-card.is-overdue {
+  box-shadow: inset 0 0 0 1px rgba(255, 185, 102, 0.2);
 }
 
 .task-header {
@@ -342,14 +424,35 @@ select option {
   margin-top: 0.65rem;
 }
 
-.task-meta span {
+.badge {
   padding: 0.25rem 0.65rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text);
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.badge-priority {
+  background: rgba(243, 201, 74, 0.12);
+}
+
+.priority-high .badge-priority {
+  border-color: rgba(255, 209, 102, 0.28);
+}
+
+.priority-medium .badge-priority {
+  border-color: rgba(167, 226, 109, 0.28);
+}
+
+.priority-low .badge-priority {
+  border-color: rgba(107, 210, 164, 0.28);
+}
+
+.badge-overdue {
+  border-color: rgba(255, 209, 102, 0.3);
+  background: rgba(255, 209, 102, 0.14);
 }
 
 .task-card p {
@@ -359,7 +462,7 @@ select option {
 
 .action-btn.danger,
 .alert {
-  border-color: rgba(255, 142, 142, 0.3);
+  border-color: rgba(255, 190, 179, 0.3);
   background: var(--danger-bg);
   color: #ffffff;
 }
@@ -372,11 +475,52 @@ select option {
 
 .empty-state {
   margin: 0;
-  border: 1px dashed var(--line-strong);
+  border: 1px dashed rgba(243, 201, 74, 0.32);
   border-radius: 16px;
   padding: 1.15rem;
   text-align: center;
   background: rgba(255, 255, 255, 0.03);
+}
+
+.toast-region {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 1000;
+  display: grid;
+  gap: 0.7rem;
+  width: min(360px, calc(100% - 2rem));
+}
+
+.toast {
+  opacity: 0;
+  transform: translateY(10px);
+  border-radius: 16px;
+  padding: 0.95rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(22, 51, 31, 0.96);
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-success {
+  border-color: var(--success-line);
+  background: linear-gradient(180deg, rgba(22, 67, 33, 0.96) 0%, rgba(18, 49, 24, 0.98) 100%);
+}
+
+.toast-error {
+  border-color: rgba(255, 190, 179, 0.3);
+  background: linear-gradient(180deg, rgba(62, 40, 26, 0.96) 0%, rgba(40, 28, 18, 0.98) 100%);
+}
+
+.toast-info {
+  border-color: var(--info-line);
+  background: linear-gradient(180deg, rgba(63, 54, 18, 0.96) 0%, rgba(41, 34, 12, 0.98) 100%);
 }
 
 @keyframes rise {
@@ -401,17 +545,25 @@ select option {
     padding: 1.15rem;
     border-radius: 20px;
   }
+
+  .stats-card,
+  .filter-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 768px) {
+  .brand-lockup,
+  .dashboard-title,
+  .section-heading,
+  .header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .stats-card,
   .filter-card {
     grid-template-columns: 1fr;
-  }
-
-  .header-bar {
-    flex-direction: column;
-    align-items: stretch;
   }
 
   .task-actions,
@@ -425,5 +577,11 @@ select option {
   .ghost-btn,
   .action-btn {
     width: 100%;
+  }
+
+  .toast-region {
+    right: 0.75rem;
+    left: 0.75rem;
+    width: auto;
   }
 }

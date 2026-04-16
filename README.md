@@ -14,6 +14,7 @@ Biko Todo allows me and my users to:
 - search tasks quickly
 - filter tasks by status and priority
 - keep each user's tasks private and stored in Firestore
+- rely on validation rules that help protect task data
 
 ## App Link
 My Firebase project is configured as `biko-todo`, so the app can be hosted with the standard Firebase Hosting links below:
@@ -27,6 +28,7 @@ My Firebase project is configured as `biko-todo`, so the app can be hosted with 
 - Firebase Authentication
 - Cloud Firestore
 - Firebase Hosting
+- Firestore Security Rules
 - Visual Studio Code
 
 ## How To Run My App In VS Code
@@ -43,13 +45,16 @@ My Firebase project is configured as `biko-todo`, so the app can be hosted with 
 4. I copy the Firebase configuration values and place them inside [firebase.js](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firebase.js).
 5. I open `Authentication`, then enable `Email/Password` sign-in.
 6. I open `Firestore Database`, create the database, and start in the appropriate mode for my project.
-7. I make sure my Firestore rules protect each signed-in user's data properly before production use.
+7. I deploy my Firestore rules and indexes so each signed-in user can only access their own tasks.
+8. I test registration, login, task creation, editing, completion, and deletion after the Firebase setup is complete.
 
 ## Important Project Files
 - [index.html](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/index.html): I use this file for the app structure and layout.
 - [styles.css](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/styles.css): I use this file for the full visual design and responsive styling.
 - [app.js](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/app.js): I use this file for task logic, filtering, authentication flow, and user interactions.
 - [firebase.js](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firebase.js): I use this file to connect my app to Firebase.
+- [firestore.rules](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firestore.rules): I use this file to protect task data and restrict access to the correct signed-in user.
+- [firestore.indexes.json](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firestore.indexes.json): I use this file to support the Firestore query that loads each user's tasks in descending creation order.
 
 ## Features I Included
 - secure registration and login
@@ -60,6 +65,8 @@ My Firebase project is configured as `biko-todo`, so the app can be hosted with 
 - due dates and priority tags
 - responsive layout for desktop and mobile
 - minimal interface for a smoother user experience
+- toast notifications for success and error feedback
+- task validation on both the client side and Firestore side
 
 ## How To Use My App
 1. I register a new account or log in with an existing account.
@@ -75,15 +82,26 @@ My Firebase project is configured as `biko-todo`, so the app can be hosted with 
 - I used Firebase because it gives me authentication, database storage, and hosting in one ecosystem.
 - I kept the design minimal so the app feels clean, focused, and easy to use.
 - I improved the interface to make task management smoother and more user friendly.
+- I added validation so titles, descriptions, priorities, and ownership are checked before data is stored.
+- I included Firestore security rules because this app should behave like a real full stack project, not only a frontend demo.
 
 ## Deployment
 If I want to deploy the project again with Firebase Hosting, I can use:
 
 ```bash
 firebase login
-firebase init hosting
-firebase deploy
+firebase deploy --only firestore:rules,firestore:indexes
+firebase deploy --only hosting
 ```
+
+## Backend Reliability
+To make sure the backend is working properly, I now rely on:
+- Firebase Authentication for secure sign up and login
+- Cloud Firestore for storing tasks per authenticated user
+- Firestore security rules so users can only read and change their own task documents
+- Firestore indexes so my task query works correctly in production
+- input validation before data is sent to Firebase
+- consistent task fields such as `title`, `description`, `priority`, `dueDate`, `completed`, `userId`, `createdAt`, and `updatedAt`
 
 ## Final Statement
 I developed this project independently as Clodate Mnisi, and it reflects my own work, my technical skills, and my approach to building a useful client-ready web application.

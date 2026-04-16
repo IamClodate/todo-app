@@ -1,6 +1,3 @@
-// Main application script for the todo app.
-// This file handles UI rendering, Firebase authentication, Firestore task storage,
-// and user interactions like adding, editing, and deleting tasks.
 import { auth, db } from './firebase.js';
 
 import {
@@ -59,11 +56,20 @@ const tasksList = document.getElementById('tasks-list');
 const totalCount = document.getElementById('total-count');
 const completedCount = document.getElementById('completed-count');
 const pendingCount = document.getElementById('pending-count');
+const overdueCount = document.getElementById('overdue-count');
+const toastRegion = document.getElementById('toast-region');
+
+const PRIORITY_VALUES = ['low', 'medium', 'high'];
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+const MAX_TITLE_LENGTH = 80;
+const MAX_DESCRIPTION_LENGTH = 280;
 
 let authMode = 'login';
 let currentUser = null;
 let unsubscribeTasks = null;
 let taskDocuments = [];
+let activeToastTimeouts = [];
 
 function showElement(element) {
   element.classList.remove('hidden');
@@ -71,6 +77,12 @@ function showElement(element) {
 
 function hideElement(element) {
   element.classList.add('hidden');
+}
+
+function clearNode(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
 }
 
 function setActiveTab(mode) {
@@ -113,6 +125,30 @@ function clearError(element) {
   element.classList.add('hidden');
 }
 
+function showToast(message, type = 'info') {
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  toastRegion.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('visible');
+  });
+
+  const timeoutId = window.setTimeout(() => {
+    toast.classList.remove('visible');
+    window.setTimeout(() => toast.remove(), 220);
+  }, 2800);
+
+  activeToastTimeouts.push(timeoutId);
+}
+
+function clearToasts() {
+  activeToastTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+  activeToastTimeouts = [];
+  clearNode(toastRegion);
+}
+
 function escapeHtml(value = '') {
   return value
     .replaceAll('&', '&amp;')
@@ -120,6 +156,25 @@ function escapeHtml(value = '') {
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
     .replaceAll("'", '&#39;');
+}
+
+function normalizeWhitespace(value) {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function isValidDueDate(value) {
+  return value === '' || /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function isPastDue(value) {
+  if (!value) {
+    return false;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const dueDate = new Date(`${value}T00:00:00`);
+  return dueDate < today;
 }
 
 function updateTaskFormState(isEditing) {
@@ -132,10 +187,12 @@ function updateStats(tasks) {
   const total = tasks.length;
   const completed = tasks.filter((task) => task.completed).length;
   const pending = total - completed;
+  const overdue = tasks.filter((task) => !task.completed && isPastDue(task.dueDate)).length;
 
   totalCount.textContent = total;
   completedCount.textContent = completed;
   pendingCount.textContent = pending;
+  overdueCount.textContent = overdue;
 }
 
 function getFilteredTasks() {
@@ -174,20 +231,23 @@ function renderTasks() {
     .map((task) => {
       const priorityLabel = task.priority.charAt(0).toUpperCase() + task.priority.slice(1);
       const statusLabel = task.completed ? 'Completed' : 'Pending';
-      const statusClass = task.completed ? 'completed' : '';
-      const dueDateLabel = task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date';
+      const dueDateLabel = task.dueDate ? new Date(`${task.dueDate}T00:00:00`).toLocaleDateString() : 'No due date';
       const title = escapeHtml(task.title);
       const description = escapeHtml(task.description || 'No description provided.');
+      const priorityClass = `priority-${task.priority}`;
+      const completedClass = task.completed ? 'completed' : '';
+      const overdueClass = !task.completed && isPastDue(task.dueDate) ? 'is-overdue' : '';
+      const dueTone = !task.completed && isPastDue(task.dueDate) ? 'badge-overdue' : '';
 
       return `
-        <article class="task-card ${statusClass}">
+        <article class="task-card ${completedClass} ${priorityClass} ${overdueClass}">
           <div class="task-header">
             <div>
               <h3 class="task-title">${title}</h3>
               <div class="task-meta">
-                <span>${priorityLabel}</span>
-                <span>${statusLabel}</span>
-                <span>${dueDateLabel}</span>
+                <span class="badge badge-priority">${priorityLabel}</span>
+                <span class="badge">${statusLabel}</span>
+                <span class="badge ${dueTone}">${dueDateLabel}</span>
               </div>
             </div>
             <div class="task-actions">
@@ -221,26 +281,89 @@ function subscribeToTasks(userId) {
         id: docItem.id,
         ...docItem.data(),
       }));
+      clearError(taskError);
       renderTasks();
     },
     (error) => {
-      showError(taskError, 'Unable to load tasks. Check your network connection.');
+      showError(taskError, 'Unable to load tasks. Please confirm Firestore is enabled and the rules are deployed.');
+      showToast('Task sync failed. Please check Firebase setup.', 'error');
       console.error('Firestore error:', error);
     }
   );
+}
+
+function validateAuthInput() {
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+
+  if (!email || !password) {
+    return 'Please provide both email and password.';
+  }
+
+  if (!EMAIL_PATTERN.test(email)) {
+    return 'Please enter a valid email address.';
+  }
+
+  if (authMode === 'register') {
+    const name = normalizeWhitespace(fullNameInput.value);
+
+    if (name.length < 2) {
+      return 'Please enter your full name with at least 2 characters.';
+    }
+
+    if (!PASSWORD_PATTERN.test(password)) {
+      return 'Please use at least 8 characters and include both letters and numbers.';
+    }
+
+    if (password !== confirmPasswordInput.value) {
+      return 'Passwords do not match.';
+    }
+  }
+
+  return '';
+}
+
+function validateTaskInput() {
+  const title = normalizeWhitespace(taskTitle.value);
+  const description = normalizeWhitespace(taskDescription.value);
+  const priority = taskPriority.value;
+  const dueDate = taskDueDate.value;
+
+  if (title.length < 3) {
+    return 'Task title must be at least 3 characters long.';
+  }
+
+  if (title.length > MAX_TITLE_LENGTH) {
+    return `Task title must stay under ${MAX_TITLE_LENGTH} characters.`;
+  }
+
+  if (description.length > MAX_DESCRIPTION_LENGTH) {
+    return `Description must stay under ${MAX_DESCRIPTION_LENGTH} characters.`;
+  }
+
+  if (!PRIORITY_VALUES.includes(priority)) {
+    return 'Please choose a valid priority.';
+  }
+
+  if (!isValidDueDate(dueDate)) {
+    return 'Please choose a valid due date.';
+  }
+
+  return '';
 }
 
 async function handleAuthSubmit(event) {
   event.preventDefault();
   clearError(authError);
 
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
-
-  if (!email || !password) {
-    showError(authError, 'Please provide both email and password.');
+  const validationError = validateAuthInput();
+  if (validationError) {
+    showError(authError, validationError);
     return;
   }
+
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
 
   authSubmit.disabled = true;
   authSubmit.textContent = authMode === 'login' ? 'Logging in...' : 'Creating account...';
@@ -248,32 +371,24 @@ async function handleAuthSubmit(event) {
   try {
     if (authMode === 'login') {
       await signInWithEmailAndPassword(auth, email, password);
+      showToast('Login successful. Welcome back.', 'success');
     } else {
-      const name = fullNameInput.value.trim();
-      const confirmPassword = confirmPasswordInput.value;
-
-      if (!name) {
-        showError(authError, 'Please enter your full name.');
-        return;
-      }
-
-      if (password !== confirmPassword) {
-        showError(authError, 'Passwords do not match.');
-        return;
-      }
-
+      const name = normalizeWhitespace(fullNameInput.value);
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
+      showToast('Account created successfully.', 'success');
     }
   } catch (error) {
     if (error.code === 'auth/email-already-in-use') {
       showError(authError, 'That email is already registered.');
     } else if (error.code === 'auth/invalid-email') {
       showError(authError, 'Please enter a valid email address.');
-    } else if (error.code === 'auth/wrong-password') {
-      showError(authError, 'Incorrect password.');
+    } else if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+      showError(authError, 'Incorrect email or password.');
     } else if (error.code === 'auth/user-not-found') {
       showError(authError, 'No account found with that email.');
+    } else if (error.code === 'auth/weak-password') {
+      showError(authError, 'Please use a stronger password with at least 8 characters.');
     } else {
       showError(authError, error.message || 'Unable to authenticate. Try again.');
       console.error(error);
@@ -288,23 +403,42 @@ async function handleTaskSubmit(event) {
   event.preventDefault();
   clearError(taskError);
 
-  const title = taskTitle.value.trim();
-  const description = taskDescription.value.trim();
-  const priority = taskPriority.value;
-  const dueDate = taskDueDate.value;
-  const taskId = editTaskId.value;
-
-  if (!title) {
-    showError(taskError, 'Task title is required.');
+  if (!currentUser) {
+    showError(taskError, 'Please log in before saving a task.');
     return;
   }
 
+  const validationError = validateTaskInput();
+  if (validationError) {
+    showError(taskError, validationError);
+    return;
+  }
+
+  const title = normalizeWhitespace(taskTitle.value);
+  const description = normalizeWhitespace(taskDescription.value);
+  const priority = taskPriority.value;
+  const dueDate = taskDueDate.value || null;
+  const taskId = editTaskId.value;
+
   saveTaskButton.disabled = true;
+  cancelEditButton.disabled = true;
   saveTaskButton.textContent = taskId ? 'Updating...' : 'Saving...';
 
   try {
     if (taskId) {
-      await updateDoc(doc(db, 'tasks', taskId), { title, description, priority, dueDate });
+      const task = taskDocuments.find((item) => item.id === taskId && item.userId === currentUser.uid);
+      if (!task) {
+        throw new Error('The selected task could not be found for this account.');
+      }
+
+      await updateDoc(doc(db, 'tasks', taskId), {
+        title,
+        description,
+        priority,
+        dueDate,
+        updatedAt: serverTimestamp(),
+      });
+      showToast('Task updated successfully.', 'success');
     } else {
       await addDoc(collection(db, 'tasks'), {
         title,
@@ -314,61 +448,80 @@ async function handleTaskSubmit(event) {
         completed: false,
         userId: currentUser.uid,
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       });
+      showToast('Task saved successfully.', 'success');
     }
 
     resetTaskForm();
   } catch (error) {
-    showError(taskError, 'Unable to save task. Please try again.');
+    showError(taskError, error.message || 'Unable to save task. Please try again.');
     console.error(error);
   } finally {
     saveTaskButton.disabled = false;
+    cancelEditButton.disabled = false;
     updateTaskFormState(Boolean(editTaskId.value));
   }
 }
 
 async function handleTaskAction(event) {
-  const action = event.target.dataset.action;
-  const taskId = event.target.dataset.id;
-
-  if (!action || !taskId) {
+  const target = event.target.closest('button[data-action]');
+  if (!target) {
     return;
   }
 
-  if (action === 'toggle') {
-    const task = taskDocuments.find((item) => item.id === taskId);
-    if (!task) {
-      return;
-    }
+  const action = target.dataset.action;
+  const taskId = target.dataset.id;
+  const task = taskDocuments.find((item) => item.id === taskId && item.userId === currentUser?.uid);
 
-    await updateDoc(doc(db, 'tasks', taskId), { completed: !task.completed });
+  if (!action || !taskId || !task) {
+    showToast('That task is no longer available.', 'error');
     return;
   }
 
-  if (action === 'edit') {
-    const task = taskDocuments.find((item) => item.id === taskId);
-    if (!task) {
+  target.disabled = true;
+
+  try {
+    if (action === 'toggle') {
+      await updateDoc(doc(db, 'tasks', taskId), {
+        completed: !task.completed,
+        updatedAt: serverTimestamp(),
+      });
+      showToast(task.completed ? 'Task moved back to pending.' : 'Task marked as done.', 'success');
       return;
     }
 
-    taskTitle.value = task.title;
-    taskDescription.value = task.description || '';
-    taskPriority.value = task.priority;
-    taskDueDate.value = task.dueDate || '';
-    editTaskId.value = task.id;
-    updateTaskFormState(true);
-    taskTitle.focus();
-    taskForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-
-  if (action === 'delete') {
-    const confirmed = confirm('Delete this task permanently?');
-    if (!confirmed) {
+    if (action === 'edit') {
+      taskTitle.value = task.title;
+      taskDescription.value = task.description || '';
+      taskPriority.value = task.priority;
+      taskDueDate.value = task.dueDate || '';
+      editTaskId.value = task.id;
+      clearError(taskError);
+      updateTaskFormState(true);
+      taskTitle.focus();
+      taskForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      showToast('Editing task details now.', 'info');
       return;
     }
 
-    await deleteDoc(doc(db, 'tasks', taskId));
+    if (action === 'delete') {
+      const confirmed = confirm('Delete this task permanently?');
+      if (!confirmed) {
+        return;
+      }
+
+      await deleteDoc(doc(db, 'tasks', taskId));
+      if (editTaskId.value === taskId) {
+        resetTaskForm();
+      }
+      showToast('Task deleted successfully.', 'success');
+    }
+  } catch (error) {
+    showToast('Task action failed. Please try again.', 'error');
+    console.error(error);
+  } finally {
+    target.disabled = false;
   }
 }
 
@@ -390,15 +543,27 @@ loginTab.addEventListener('click', () => setActiveTab('login'));
 registerTab.addEventListener('click', () => setActiveTab('register'));
 authForm.addEventListener('submit', handleAuthSubmit);
 logoutButton.addEventListener('click', async () => {
-  await signOut(auth);
+  try {
+    await signOut(auth);
+    showToast('You have logged out successfully.', 'success');
+  } catch (error) {
+    showToast('Logout failed. Please try again.', 'error');
+    console.error(error);
+  }
 });
 taskForm.addEventListener('submit', handleTaskSubmit);
-cancelEditButton.addEventListener('click', resetTaskForm);
+cancelEditButton.addEventListener('click', () => {
+  resetTaskForm();
+  showToast('Edit cancelled.', 'info');
+});
 tasksList.addEventListener('click', handleTaskAction);
 filterStatus.addEventListener('change', renderTasks);
 filterPriority.addEventListener('change', renderTasks);
 searchQuery.addEventListener('input', renderTasks);
-clearFiltersButton.addEventListener('click', clearFilters);
+clearFiltersButton.addEventListener('click', () => {
+  clearFilters();
+  showToast('Filters cleared.', 'info');
+});
 
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
@@ -412,6 +577,7 @@ onAuthStateChanged(auth, (user) => {
   } else {
     showAuth();
     taskDocuments = [];
+    clearToasts();
     renderTasks();
 
     if (unsubscribeTasks) {
@@ -423,3 +589,4 @@ onAuthStateChanged(auth, (user) => {
 
 setActiveTab('login');
 updateTaskFormState(false);
+renderTasks();

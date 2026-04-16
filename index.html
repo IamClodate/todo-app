@@ -4,14 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Biko Todo</title>
+    <meta name="theme-color" content="#1f5c3c" />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="app">
       <main class="page auth-page" id="auth-screen">
         <div class="card auth-card">
-          <h1>Biko Todo</h1>
-          <p class="subtitle">A focused task space to help me plan clearly, work calmly, and stay on top of every priority.</p>
+          <div class="brand-lockup">
+            <img src="assets/logo-biko.svg" alt="Biko Todo logo" class="brand-logo" />
+            <div>
+              <p class="eyebrow">Biko Todo</p>
+              <h1>Plan bright. Finish right.</h1>
+            </div>
+          </div>
+          <p class="subtitle">A clean green-and-gold task space that helps me stay organised, focused, and confidently on track.</p>
 
           <div class="tab-row">
             <button id="login-tab" class="tab active">Login</button>
@@ -34,6 +42,7 @@
             <div class="form-group">
               <label for="auth-password">Password</label>
               <input id="auth-password" type="password" placeholder="Enter password" autocomplete="current-password" />
+              <p class="field-hint">I use at least 8 characters with letters and a number.</p>
             </div>
 
             <div id="confirm-password-field" class="form-group hidden">
@@ -48,9 +57,13 @@
 
       <main class="page dashboard-page hidden" id="dashboard-screen">
         <header class="header-bar">
-          <div>
-            <h1>My Todo Dashboard</h1>
-            <p id="welcome-text" class="subtitle">Welcome back.</p>
+          <div class="dashboard-title">
+            <img src="assets/logo-biko.svg" alt="Biko Todo logo" class="brand-logo brand-logo-small" />
+            <div>
+              <p class="eyebrow">Biko Todo</p>
+              <h1>My Todo Dashboard</h1>
+              <p id="welcome-text" class="subtitle">Welcome back.</p>
+            </div>
           </div>
           <button id="logout-button" class="secondary-btn">Logout</button>
         </header>
@@ -68,6 +81,10 @@
             <p class="stat-label">Pending</p>
             <p id="pending-count" class="stat-value">0</p>
           </div>
+          <div>
+            <p class="stat-label">Overdue</p>
+            <p id="overdue-count" class="stat-value">0</p>
+          </div>
         </section>
 
         <section class="card form-card">
@@ -79,12 +96,14 @@
             <input id="edit-task-id" type="hidden" />
             <div class="form-group">
               <label for="task-title">Title</label>
-              <input id="task-title" type="text" placeholder="Task title" />
+              <input id="task-title" type="text" maxlength="80" placeholder="Task title" />
+              <p class="field-hint">I keep titles short and clear, between 3 and 80 characters.</p>
             </div>
 
             <div class="form-group">
               <label for="task-description">Description</label>
-              <textarea id="task-description" rows="3" placeholder="Task description"></textarea>
+              <textarea id="task-description" rows="3" maxlength="280" placeholder="Task description"></textarea>
+              <p class="field-hint">I can add up to 280 characters for extra detail.</p>
             </div>
 
             <div class="form-group">
@@ -139,11 +158,17 @@
         </section>
 
         <section class="card task-list-card">
-          <h2>My tasks</h2>
+          <div class="section-heading">
+            <div>
+              <h2>My tasks</h2>
+              <p class="section-copy">Every task is stored under my account, with priority, due date, and status tracking built in.</p>
+            </div>
+          </div>
           <div id="tasks-list" class="tasks-list"></div>
         </section>
       </main>
     </div>
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Load the main application JavaScript file. -->
     <script type="module" src="app.js"></script>
