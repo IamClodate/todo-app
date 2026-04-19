@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -171,6 +171,191 @@
     <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Load the main application JavaScript file. -->
+    <!-- <script type="module" src="app.js"></script>
+  </body>
+</html> --> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Biko Todo</title>
+
+    <meta name="theme-color" content="#1f5c3c" />
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div id="app">
+
+      <!-- ================= AUTH SCREEN ================= -->
+      <main class="page auth-page" id="auth-screen">
+
+        <div class="card auth-card">
+
+          <div class="brand-lockup">
+            <img src="assets/logo-biko.svg" class="brand-logo" alt="logo" />
+            <div>
+              <p class="eyebrow">Biko Todo</p>
+              <h1>Plan clearly. Execute confidently.</h1>
+            </div>
+          </div>
+
+          <p class="subtitle">
+            A focused space to organise your tasks and stay in control.
+          </p>
+
+          <!-- Tabs -->
+          <div class="tab-row">
+            <button id="login-tab" class="tab active">Login</button>
+            <button id="register-tab" class="tab">Register</button>
+          </div>
+
+          <!-- Error -->
+          <div id="auth-error" class="alert hidden"></div>
+
+          <!-- FORM -->
+          <form id="auth-form" class="form-grid">
+
+            <!-- Name (register only) -->
+            <div id="name-field" class="form-group hidden">
+              <label>Full name</label>
+              <input id="full-name" type="text" placeholder="Your name" />
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label>Email</label>
+              <input id="auth-email" type="email" placeholder="you@example.com" />
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label>Password</label>
+              <input id="auth-password" type="password" placeholder="Password" />
+            </div>
+
+            <!-- Confirm (register only) -->
+            <div id="confirm-password-field" class="form-group hidden">
+              <label>Confirm password</label>
+              <input id="confirm-password" type="password" placeholder="Confirm password" />
+            </div>
+
+            <button id="auth-submit" type="submit" class="primary-btn">
+              Login
+            </button>
+
+          </form>
+        </div>
+      </main>
+
+      <!-- ================= DASHBOARD ================= -->
+      <main class="page dashboard-page hidden" id="dashboard-screen">
+
+        <!-- HEADER -->
+        <header class="header-bar">
+
+          <div class="dashboard-title">
+            <img src="assets/logo-biko.svg" class="brand-logo brand-logo-small" />
+
+            <div>
+              <p class="eyebrow">Biko Todo</p>
+              <h1>My Dashboard</h1>
+              <p id="welcome-text" class="subtitle">Welcome back</p>
+            </div>
+          </div>
+
+          <button id="logout-button" class="secondary-btn">
+            Logout
+          </button>
+
+        </header>
+
+        <!-- STATS -->
+        <section class="card stats-card">
+          <div><p>Total</p><h2 id="total-count">0</h2></div>
+          <div><p>Completed</p><h2 id="completed-count">0</h2></div>
+          <div><p>Pending</p><h2 id="pending-count">0</h2></div>
+          <div><p>Overdue</p><h2 id="overdue-count">0</h2></div>
+        </section>
+
+        <!-- TASK FORM -->
+        <section class="card form-card">
+
+          <h2 id="task-form-title">Add new task</h2>
+
+          <div id="task-error" class="alert hidden"></div>
+
+          <form id="task-form">
+
+            <input type="hidden" id="edit-task-id" />
+
+            <input id="task-title" type="text" placeholder="Task title" />
+
+            <textarea id="task-description" placeholder="Description"></textarea>
+
+            <select id="task-priority">
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+            </select>
+
+            <input id="task-due-date" type="date" />
+
+            <button id="save-task" type="submit">
+              Save task
+            </button>
+
+            <button id="cancel-edit" type="button" class="hidden">
+              Cancel edit
+            </button>
+
+          </form>
+        </section>
+
+        <!-- FILTERS -->
+        <section class="card filter-card">
+
+          <select id="filter-status">
+            <option value="all">All</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+          </select>
+
+          <select id="filter-priority">
+            <option value="all">All priority</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+
+          <input id="search-query" type="search" placeholder="Search tasks" />
+
+          <button id="clear-filters" type="button">
+            Clear filters
+          </button>
+
+        </section>
+
+        <!-- TASK LIST -->
+        <section class="card task-list-card">
+
+          <h2>Tasks</h2>
+
+          <div id="tasks-list" class="tasks-list"></div>
+
+        </section>
+
+      </main>
+    </div>
+
+    <!-- TOASTS -->
+    <div id="toast-region" class="toast-region"></div>
+
     <script type="module" src="app.js"></script>
   </body>
 </html>
