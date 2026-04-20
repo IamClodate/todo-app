@@ -328,7 +328,7 @@
 //   await supabase.auth.signOut();
 // });
 
-
+console.log("APP LOADED")
 console.log("🔥 APP IS RUNNING");
 console.log("🔥 APP LOADED - SUPABASE ACTIVE")
 
@@ -606,6 +606,8 @@ window.editTask = (id) => {
   taskPriority.value = task.priority
   taskDueDate.value = task.due_date
   editTaskId.value = task.id
+//  set the focus and clear the form after submit
+  taskTitle.focus()
 }
 
 /* ---------------- FILTERS ---------------- */
@@ -619,6 +621,7 @@ clearFiltersButton.addEventListener('click', () => {
   searchQuery.value = ''
   renderTasks()
 })
+
 
 /* ---------------- AUTH STATE ---------------- */
 supabase.auth.onAuthStateChange((event, session) => {
