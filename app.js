@@ -539,12 +539,23 @@ authForm.addEventListener('submit', async (e) => {
 })
 
 /* ---------------- LOGOUT ---------------- */
+// logoutButton.addEventListener('click', async () => {
+//   await supabase.auth.signOut()
+//   currentUser = null
+//   tasks = []
+//   showAuth()
+// })
+
+// logout button
 logoutButton.addEventListener('click', async () => {
-  await supabase.auth.signOut()
-  currentUser = null
-  tasks = []
-  showAuth()
-})
+  const confirmLogout = confirm("Are you sure you want to logout?");
+  if (!confirmLogout) return;
+
+  await supabase.auth.signOut();
+  currentUser = null;
+  tasks = [];
+  showAuth();
+});
 
 /* ---------------- CREATE / UPDATE TASK ---------------- */
 taskForm.addEventListener('submit', async (e) => {
@@ -589,13 +600,26 @@ window.toggleTask = async (id, completed) => {
   loadTasks()
 }
 
+// window.deleteTask = async (id) => {
+//   await supabase
+//     .from('tasks')
+//     .delete()
+//     .eq('id', id)
+
+//   loadTasks()
+// }
+
+// delete popup confirmation
 window.deleteTask = async (id) => {
+  const confirmDelete = confirm("⚠ You are about to delete this task. Continue?");
+  if (!confirmDelete) return;
+
   await supabase
     .from('tasks')
     .delete()
-    .eq('id', id)
+    .eq('id', id);
 
-  loadTasks()
+  loadTasks();
 }
 
 window.editTask = (id) => {
