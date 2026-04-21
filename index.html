@@ -1,189 +1,311 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Biko Todo</title>
-
-    <meta name="theme-color" content="#1f5c3c" />
-
+    <title>Biko Workspace</title>
+    <meta
+      name="description"
+      content="Premium task workspace with personal productivity tools and an admin operations portal."
+    />
+    <meta name="theme-color" content="#10231b" />
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
-    <div id="app">
+    <div class="aurora aurora-left"></div>
+    <div class="aurora aurora-right"></div>
 
-      <!-- ================= AUTH SCREEN ================= -->
+    <div id="app" class="shell">
       <main class="page auth-page" id="auth-screen">
+        <section class="auth-panel">
+          <div class="auth-copy card">
+            <p class="eyebrow">Biko Workspace</p>
+            <div class="brand-lockup">
+              <img src="assets/logo-biko.svg" class="brand-logo auth-logo" alt="Biko logo" />
+              <div>
+                <h1>One workspace for users, operations, and admin control.</h1>
+                <p class="subtitle">
+                  Secure sign-in, focused task execution, system-wide monitoring, and elegant
+                  reporting in one experience.
+                </p>
+              </div>
+            </div>
 
-        <div class="card auth-card">
-
-          <div class="brand-lockup">
-            <img src="assets/logo-biko.svg" class="brand-logo" alt="logo" />
-            <div>
-              <p class="eyebrow">Biko Todo</p>
-              <h1>Plan clearly. Execute confidently.</h1>
+            <div class="hero-grid">
+              <article class="hero-metric">
+                <span>Live roles</span>
+                <strong>User + Admin</strong>
+              </article>
+              <article class="hero-metric">
+                <span>Visibility</span>
+                <strong>Private by default</strong>
+              </article>
+              <article class="hero-metric">
+                <span>Admin intelligence</span>
+                <strong>Analytics + Reports</strong>
+              </article>
             </div>
           </div>
 
-          <p class="subtitle">
-            A focused space to organise your tasks and stay in control.
-          </p>
-
-          <!-- Tabs -->
-          <div class="tab-row">
-            <button id="login-tab" class="tab active">Login</button>
-            <button id="register-tab" class="tab">Register</button>
-          </div>
-
-          <!-- Error -->
-          <div id="auth-error" class="alert hidden"></div>
-
-          <!-- FORM -->
-          <form id="auth-form" class="form-grid">
-
-            <!-- Name (register only) -->
-            <div id="name-field" class="form-group hidden">
-              <label>Full name</label>
-              <input id="full-name" type="text" placeholder="Your name" />
+          <section class="auth-card card">
+            <div class="tab-row">
+              <button id="login-tab" class="tab active" type="button">Login</button>
+              <button id="register-tab" class="tab" type="button">Register</button>
             </div>
 
-            <!-- Email -->
-            <div class="form-group">
-              <label>Email</label>
-              <input id="auth-email" type="email" placeholder="you@example.com" />
-            </div>
+            <div id="auth-error" class="alert hidden"></div>
 
-            <!-- Password -->
-            <div class="form-group">
-              <label>Password</label>
-              <input id="auth-password" type="password" placeholder="Password" />
-            </div>
+            <form id="auth-form" class="form-grid">
+              <div id="name-field" class="form-group hidden">
+                <label for="full-name">Full name</label>
+                <input id="full-name" type="text" placeholder="Clodate Mnisi" />
+              </div>
 
-            <!-- Confirm (register only) -->
-            <div id="confirm-password-field" class="form-group hidden">
-              <label>Confirm password</label>
-              <input id="confirm-password" type="password" placeholder="Confirm password" />
-            </div>
+              <div class="form-group">
+                <label for="auth-email">Email</label>
+                <input id="auth-email" type="email" placeholder="you@example.com" required />
+              </div>
 
-            <button id="auth-submit" type="submit" class="primary-btn">
-              Login
-            </button>
+              <div class="form-group">
+                <label for="auth-password">Password</label>
+                <input id="auth-password" type="password" placeholder="Enter your password" required />
+              </div>
 
-          </form>
-        </div>
+              <div id="confirm-password-field" class="form-group hidden">
+                <label for="confirm-password">Confirm password</label>
+                <input id="confirm-password" type="password" placeholder="Confirm password" />
+              </div>
+
+              <button id="auth-submit" type="submit" class="primary-btn full-width">Login</button>
+            </form>
+          </section>
+        </section>
       </main>
 
-      <!-- ================= DASHBOARD ================= -->
       <main class="page dashboard-page hidden" id="dashboard-screen">
-
-        <!-- HEADER -->
-        <header class="header-bar">
-
-          <div class="dashboard-title">
-            <img src="assets/logo-biko.svg" class="brand-logo brand-logo-small" />
-
+        <header class="topbar card">
+          <div class="topbar-brand">
+            <img src="assets/logo-biko.svg" class="brand-logo" alt="Biko logo" />
             <div>
-              <p class="eyebrow">Biko Todo</p>
-              <!-- <h1>My Dashboard</h1> -->
-               <!-- for admin portal -->
-                <h1 id="dashboard-title">My Dashboard</h1>
+              <p class="eyebrow">Biko Workspace</p>
+              <h1 id="dashboard-title">My Workspace</h1>
               <p id="welcome-text" class="subtitle">Welcome back</p>
             </div>
           </div>
 
-          <button id="logout-button" class="secondary-btn">
-            Logout
-          </button>
-
+          <div class="topbar-actions">
+            <div class="identity-pill">
+              <span id="role-badge" class="role-badge">User</span>
+              <span id="active-user-email"></span>
+            </div>
+            <button id="logout-button" class="secondary-btn" type="button">Logout</button>
+          </div>
         </header>
 
-        <!-- STATS -->
-        <section class="card stats-card">
-          <div><p>Total</p><h2 id="total-count">0</h2></div>
-          <div><p>Completed</p><h2 id="completed-count">0</h2></div>
-          <div><p>Pending</p><h2 id="pending-count">0</h2></div>
-          <div><p>Overdue</p><h2 id="overdue-count">0</h2></div>
+        <section id="setup-banner" class="card banner hidden">
+          <div>
+            <p class="eyebrow">Backend setup needed</p>
+            <h2>Advanced admin features need the Supabase schema update.</h2>
+            <p class="subtitle">
+              Core tasks still work, but activity tracking, profiles, and full admin reporting depend
+              on the SQL in <code>supabase-setup.sql</code>.
+            </p>
+          </div>
+          <span id="setup-summary" class="banner-chip">Checking tables</span>
         </section>
 
-        <!-- TASK FORM -->
-        <section class="card form-card">
-
-          <h2 id="task-form-title">Add new task</h2>
-
-          <div id="task-error" class="alert hidden"></div>
-
-          <form id="task-form">
-
-            <input type="hidden" id="edit-task-id" />
-
-            <input id="task-title" type="text" placeholder="Task title" />
-
-            <textarea id="task-description" placeholder="Description"></textarea>
-
-            <select id="task-priority">
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="low">Low</option>
-            </select>
-
-            <input id="task-due-date" type="date" />
-
-            <button id="save-task" type="submit">
-              Save task
-            </button>
-
-            <button id="cancel-edit" type="button" class="hidden">
-              Cancel edit
-            </button>
-
-          </form>
+        <section class="overview-grid">
+          <article class="card stat-card">
+            <span class="stat-label">Total tasks</span>
+            <h2 id="total-count">0</h2>
+            <p id="total-caption" class="stat-caption">Across your current view</p>
+          </article>
+          <article class="card stat-card">
+            <span class="stat-label">Completed</span>
+            <h2 id="completed-count">0</h2>
+            <p id="completed-caption" class="stat-caption">Tasks finished</p>
+          </article>
+          <article class="card stat-card">
+            <span class="stat-label">Pending</span>
+            <h2 id="pending-count">0</h2>
+            <p id="pending-caption" class="stat-caption">Still in motion</p>
+          </article>
+          <article class="card stat-card">
+            <span class="stat-label">Overdue</span>
+            <h2 id="overdue-count">0</h2>
+            <p id="overdue-caption" class="stat-caption">Need attention</p>
+          </article>
         </section>
 
-        <!-- FILTERS -->
-        <section class="card filter-card">
+        <section class="content-grid">
+          <div class="main-column">
+            <section class="card control-card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Task operations</p>
+                  <h2 id="task-form-title">Create or update work</h2>
+                </div>
+                <span id="task-form-note" class="chip">Personal view</span>
+              </div>
 
-          <select id="filter-status">
-            <option value="all">All</option>
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
-          </select>
+              <div id="task-error" class="alert hidden"></div>
 
-          <select id="filter-priority">
-            <option value="all">All priority</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-          </select>
+              <form id="task-form" class="task-form-grid">
+                <input type="hidden" id="edit-task-id" />
 
-          <input id="search-query" type="search" placeholder="Search tasks" />
+                <div class="form-group form-span-2">
+                  <label for="task-title">Task title</label>
+                  <input id="task-title" type="text" placeholder="Prepare weekly launch report" required />
+                </div>
 
-          <button id="clear-filters" type="button">
-            Clear filters
-          </button>
+                <div class="form-group form-span-2">
+                  <label for="task-description">Description</label>
+                  <textarea
+                    id="task-description"
+                    rows="4"
+                    placeholder="Add useful context, blockers, owners, or expected outcome."
+                  ></textarea>
+                </div>
 
+                <div class="form-group">
+                  <label for="task-priority">Priority</label>
+                  <select id="task-priority">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="task-due-date">Due date</label>
+                  <input id="task-due-date" type="date" />
+                </div>
+
+                <div id="owner-field" class="form-group hidden">
+                  <label for="task-owner">Assigned user</label>
+                  <select id="task-owner"></select>
+                </div>
+
+                <div class="form-actions form-span-2">
+                  <button id="save-task" type="submit" class="primary-btn">Save task</button>
+                  <button id="cancel-edit" type="button" class="ghost-btn hidden">Cancel edit</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="card analytics-card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Insights</p>
+                  <h2 id="analytics-title">Performance snapshot</h2>
+                </div>
+                <span id="analytics-chip" class="chip">Live analytics</span>
+              </div>
+
+              <div class="analytics-grid">
+                <article class="insight-panel">
+                  <span>Completion rate</span>
+                  <strong id="completion-rate">0%</strong>
+                  <div class="progress-track">
+                    <div id="completion-bar" class="progress-fill"></div>
+                  </div>
+                </article>
+                <article class="insight-panel">
+                  <span>High priority load</span>
+                  <strong id="high-priority-count">0</strong>
+                  <small id="high-priority-caption">No critical items</small>
+                </article>
+                <article class="insight-panel">
+                  <span>Due in 7 days</span>
+                  <strong id="due-soon-count">0</strong>
+                  <small id="due-soon-caption">Nothing urgent</small>
+                </article>
+                <article class="insight-panel">
+                  <span id="fourth-insight-label">Productivity score</span>
+                  <strong id="fourth-insight-value">0</strong>
+                  <small id="fourth-insight-caption">Generated from current data</small>
+                </article>
+              </div>
+            </section>
+
+            <section class="card reports-card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Reports</p>
+                  <h2>Executive summary</h2>
+                </div>
+                <button id="refresh-reports" type="button" class="ghost-btn">Refresh report</button>
+              </div>
+              <div id="report-cards" class="report-grid"></div>
+            </section>
+
+            <section class="card task-list-card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Task center</p>
+                  <h2 id="tasks-heading">Tasks</h2>
+                </div>
+              </div>
+
+              <div class="filters-grid">
+                <select id="filter-status">
+                  <option value="all">All statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                  <option value="overdue">Overdue</option>
+                </select>
+
+                <select id="filter-priority">
+                  <option value="all">All priorities</option>
+                  <option value="high">High</option>
+                  <option value="medium">Medium</option>
+                  <option value="low">Low</option>
+                </select>
+
+                <select id="filter-owner" class="hidden">
+                  <option value="all">All users</option>
+                </select>
+
+                <input id="search-query" type="search" placeholder="Search tasks, descriptions, or owners" />
+                <button id="clear-filters" type="button" class="ghost-btn">Clear filters</button>
+              </div>
+
+              <div id="tasks-list" class="tasks-list"></div>
+            </section>
+          </div>
+
+          <aside class="side-column">
+            <section class="card activity-card">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Activity feed</p>
+                  <h2 id="activity-title">Recent activity</h2>
+                </div>
+                <span id="activity-chip" class="chip">Secure events</span>
+              </div>
+              <div id="activity-list" class="activity-list"></div>
+            </section>
+
+            <section id="admin-panel" class="card admin-card hidden">
+              <div class="section-heading">
+                <div>
+                  <p class="eyebrow">Admin operations</p>
+                  <h2>System users</h2>
+                </div>
+                <span class="chip">Admin only</span>
+              </div>
+              <div id="user-insights" class="user-insights"></div>
+            </section>
+          </aside>
         </section>
-
-        <!-- TASK LIST -->
-        <section class="card task-list-card">
-
-          <h2>Tasks</h2>
-
-          <div id="tasks-list" class="tasks-list"></div>
-
-        </section>
-
-
-
       </main>
     </div>
 
-    <!-- TOASTS -->
     <div id="toast-region" class="toast-region"></div>
 
-    
     <script type="module" src="app.js"></script>
   </body>
 </html>
