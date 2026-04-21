@@ -1,107 +1,176 @@
 # Biko Todo App
 
-## Short Summary
-I built Biko Todo as a clean and practical task management web app that helps me organise daily work, track priorities, and manage tasks securely through Firebase Authentication and Firestore.
+## 🔗 Live Application
+I have deployed my application here:
+https://bikotodo.netlify.app
 
-## About This App
-My name is Clodate Mnisi, and this application was built solely by myself, Clodate Mnisi. I created it to show that I can design and develop a complete frontend and Firebase-powered web application from start to finish using HTML, CSS, JavaScript, and Firebase services.
+## 🧠 Backend Dashboard (Quick Access)
+For backend access during demos or testing, I use:
+https://app.supabase.com/project/wwbbrowrjipvzhstglkx
 
-Biko Todo allows me and my users to:
-- create an account and sign in securely
-- add, edit, complete, and delete tasks
-- assign priority levels to tasks
-- add due dates to tasks
-- search tasks quickly
+## 📦 GitHub Repository
+This is my full project repository:
+https://github.com/IamClodate/todo-app
+
+---
+
+## 👩‍💻 About This Project
+My name is Clodate Mnisi, and I built this full-stack application entirely on my own.
+
+I created Biko Todo to demonstrate my ability to design, build, and deploy a real-world web application from start to finish. This includes frontend development, backend integration, authentication, database management, and deployment.
+
+The application is designed to help users manage their daily tasks in a clean, efficient, and secure way.
+
+---
+
+## 🚀 What The App Does
+With this app, I can:
+
+- register and log in securely
+- create, edit, and delete tasks
+- mark tasks as completed or pending
+- assign priority levels (Low, Medium, High)
+- set due dates for tasks
+- search tasks instantly
 - filter tasks by status and priority
-- keep each user's tasks private and stored in Firestore
-- rely on validation rules that help protect task data
+- view task statistics (total, completed, pending, overdue)
+- ensure each user only sees their own tasks
 
-## App Link
-My Firebase project is configured as `biko-todo`, so the app can be hosted with the standard Firebase Hosting links below:
-- https://biko-todo.web.app
-- https://biko-todo.firebaseapp.com
+---
 
-## Technologies I Used
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Firebase Authentication
-- Cloud Firestore
-- Firebase Hosting
-- Firestore Security Rules
-- Visual Studio Code
+## 🧰 Technologies I Used
+- HTML5  
+- CSS3  
+- Vanilla JavaScript  
+- Supabase (Authentication + PostgreSQL Database)  
+- Row Level Security (RLS)  
+- Netlify (Hosting & Auto Deployment)  
+- Git & GitHub  
 
-## How To Run My App In VS Code
-1. I open the project folder in Visual Studio Code.
-2. I make sure all project files are in the same folder, including `index.html`, `styles.css`, `app.js`, and `firebase.js`.
-3. I install the VS Code `Live Server` extension if I want a quick local preview.
-4. I right-click `index.html` and choose `Open with Live Server`, or I open the file directly in the browser.
-5. If I update the Firebase configuration, I refresh the browser so the app reconnects with the correct project settings.
+---
 
-## Firebase Setup Instructions
-1. I go to the Firebase Console: https://console.firebase.google.com
-2. I create a new Firebase project or open my existing project named `biko-todo`.
-3. I open `Project settings` and register a Web App if I have not already done so.
-4. I copy the Firebase configuration values and place them inside [firebase.js](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firebase.js).
-5. I open `Authentication`, then enable `Email/Password` sign-in.
-6. I open `Firestore Database`, create the database, and start in the appropriate mode for my project.
-7. I deploy my Firestore rules and indexes so each signed-in user can only access their own tasks.
-8. I test registration, login, task creation, editing, completion, and deletion after the Firebase setup is complete.
+## 🔐 Backend (Supabase)
+I use Supabase as my backend for authentication and database management.
 
-## Important Project Files
-- [index.html](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/index.html): I use this file for the app structure and layout.
-- [styles.css](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/styles.css): I use this file for the full visual design and responsive styling.
-- [app.js](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/app.js): I use this file for task logic, filtering, authentication flow, and user interactions.
-- [firebase.js](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firebase.js): I use this file to connect my app to Firebase.
-- [firestore.rules](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firestore.rules): I use this file to protect task data and restrict access to the correct signed-in user.
-- [firestore.indexes.json](C:/Users/cloda/OneDrive/Documents/BIKO%202026/TO%20DO%20LIST/todo-app/firestore.indexes.json): I use this file to support the Firestore query that loads each user's tasks in descending creation order.
+### Backend API Base URL
+https://wwbbrowrjipvzhstglkx.supabase.co
 
-## Features I Included
-- secure registration and login
-- user-specific task storage
-- task creation and task editing
-- task completion and task deletion
-- search and filtering tools
-- due dates and priority tags
-- responsive layout for desktop and mobile
-- minimal interface for a smoother user experience
-- toast notifications for success and error feedback
-- task validation on both the client side and Firestore side
+---
 
-## How To Use My App
-1. I register a new account or log in with an existing account.
-2. I open my dashboard after authentication.
-3. I add a task title, description, priority, and due date.
-4. I save the task and view it instantly in my task list.
-5. I use the task buttons to mark a task as done, edit it, or delete it.
-6. I use the filter and search tools to find tasks faster.
-7. I log out when I am finished.
+## ⚡ How I Access the Database (For Demo or Debugging)
 
-## Notes For A Client Or Reviewer
-- I built this app in a way that keeps each user's tasks connected to that user's account.
-- I used Firebase because it gives me authentication, database storage, and hosting in one ecosystem.
-- I kept the design minimal so the app feels clean, focused, and easy to use.
-- I improved the interface to make task management smoother and more user friendly.
-- I added validation so titles, descriptions, priorities, and ownership are checked before data is stored.
-- I included Firestore security rules because this app should behave like a real full stack project, not only a frontend demo.
+When I need to quickly access the database, I do the following:
 
-## Deployment
-If I want to deploy the project again with Firebase Hosting, I can use:
+1. Open:
+   https://app.supabase.com/project/wwbbrowrjipvzhstglkx  
 
+2. Click on:
+   **Table Editor**
+
+3. Select:
+   **tasks table**
+
+4. From there I can:
+   - view all stored tasks
+   - see which user created each task
+   - check task status (completed or pending)
+   - verify priorities and due dates
+
+This is especially useful during presentations to show that the backend is working in real time.
+
+---
+
+## 🎤 How I Demonstrate the App
+
+During a demo, I usually:
+
+1. Open the live app  
+   https://bikotodo.netlify.app  
+
+2. Log in or register  
+
+3. Add a new task  
+
+4. Open the Supabase dashboard  
+
+5. Refresh the `tasks` table  
+
+The new task appears immediately, which shows that the frontend is correctly connected to the backend.
+
+---
+
+## 🔒 Security
+I implemented security using Supabase Row Level Security (RLS):
+
+- each task is linked to a specific user  
+- users can only view their own tasks  
+- users cannot access other users’ data  
+- authentication is handled securely via Supabase Auth  
+
+---
+
+## 📁 Project Structure
+
+todo-app/
+│
+├── index.html
+├── styles.css
+├── app.js
+├── assets/
+├── README.md
+├── .gitignore
+
+
+---
+
+## ⚙️ How I Run the App Locally
+
+1. I open the project folder in VS Code  
+2. I open `index.html` in the browser  
+
+OR  
+
+I use the Live Server extension for automatic reload  
+
+---
+
+## 🔁 Automatic Deployment (GitHub → Netlify)
+
+I connected my GitHub repository to Netlify for automatic deployment.
+
+This means:
+- every time I push code to GitHub  
+- Netlify automatically rebuilds and updates the live app  
+
+### Git Commands I Use
 ```bash
-firebase login
-firebase deploy --only firestore:rules,firestore:indexes
-firebase deploy --only hosting
-```
+git add .
+git commit -m "update"
+git push
+🌐 Deployment Overview
+Frontend: Netlify
+Backend: Supabase
+Version Control: GitHub
+💡 Key Highlights of My App
+built as a full-stack application independently
+uses real authentication and database (not mock data)
+secure backend using Row Level Security
+clean and responsive UI design
+live production deployment
+automatic updates through GitHub integration
+🧪 Example Use Case
 
-## Backend Reliability
-To make sure the backend is working properly, I now rely on:
-- Firebase Authentication for secure sign up and login
-- Cloud Firestore for storing tasks per authenticated user
-- Firestore security rules so users can only read and change their own task documents
-- Firestore indexes so my task query works correctly in production
-- input validation before data is sent to Firebase
-- consistent task fields such as `title`, `description`, `priority`, `dueDate`, `completed`, `userId`, `createdAt`, and `updatedAt`
+A user can:
 
-## Final Statement
-I developed this project independently as Clodate Mnisi, and it reflects my own work, my technical skills, and my approach to building a useful client-ready web application.
+log in securely
+create tasks for daily activities
+set priorities and deadlines
+track progress
+manage productivity from a single dashboard
+👩‍💻 Author
+
+Clodate Mnisi
+
+📌 Final Note
+
+I developed this project entirely on my own. It reflects my ability to build, secure, and deploy a complete full-stack web application using modern tools and best practices.
