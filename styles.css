@@ -380,6 +380,12 @@ select option {
 }
 /* up to here */
 
+/* for admin portal */
+.admin-user {
+  font-size: 12px;
+  color: #bbb;
+  margin-top: 5px;
+}
 
 
 
